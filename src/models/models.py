@@ -22,7 +22,7 @@ from torch.utils.data import TensorDataset, DataLoader
 
 def train_random_forest_kfold(
     dataset_path: str = './data/processed/surface_features_processed.csv', 
-    k_folds: int = 7, 
+    k_folds: int = 3, 
     model_dir: str = 'saved_model'
 ) -> Tuple[float, float]:
     """
@@ -152,7 +152,7 @@ def train_random_forest_kfold(
 
 def train_xgboost_kfold(
     dataset_path: str = './data/processed/surface_features_processed.csv', 
-    k_folds: int = 5, 
+    k_folds: int = 3, 
     model_dir: str = 'saved_model'
 ) -> Tuple[float, float]:
     """
@@ -305,9 +305,9 @@ class SimpleANN(nn.Module):
             num_classes: Number of output classes
         """
         super(SimpleANN, self).__init__()
-        self.layer1 = nn.Linear(input_size, 128)
-        self.layer2 = nn.Linear(128, 64)
-        self.layer3 = nn.Linear(64, 32)
+        self.layer1 = nn.Linear(input_size, 32)
+        self.layer2 = nn.Linear(32, 32)
+        self.layer3 = nn.Linear(32, 32)
         self.output_layer = nn.Linear(32, num_classes)
         self.relu = nn.ReLU()
         self.dropout = nn.Dropout(0.4)

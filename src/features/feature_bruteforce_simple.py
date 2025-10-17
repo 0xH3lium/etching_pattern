@@ -228,11 +228,15 @@ def compare_models_and_features(
         df, X, y, feature_names,
         min_features=min_features, 
         max_features=max_features, 
-        model_type='random_forest',
+        model_type='xgboost',
         k_folds=3,
-        max_combinations_per_size=200
+        max_combinations_per_size=1000
     )
-    
+
+    print(f"\nRANDOM FOREST BEST RESULT:")
+    print(f"Accuracy: {rf_result['best_accuracy']:.4f}")
+    print(f"Features: {rf_result['best_features']}")
+"""
     # Test XGBoost
     print(f"\n{'='*30}")
     print("TESTING XGBOOST")
@@ -250,10 +254,7 @@ def compare_models_and_features(
     print(f"\n{'='*60}")
     print("FINAL RESULTS")
     print(f"{'='*60}")
-    
-    print(f"\nRANDOM FOREST BEST RESULT:")
-    print(f"Accuracy: {rf_result['best_accuracy']:.4f}")
-    print(f"Features: {rf_result['best_features']}")
+
     
     print(f"\nXGBOOST BEST RESULT:")
     print(f"Accuracy: {xgb_result['best_accuracy']:.4f}")
@@ -275,14 +276,14 @@ def compare_models_and_features(
     print(f"\nTOP 3 COMBINATIONS FOR XGBOOST:")
     for i, res in enumerate(xgb_result['all_results'][:3]):
         print(f"{i+1}. {res['accuracy']:.4f}: {res['features']}")
-
+"""
 
 def main():
     """Main function to run the feature combination optimization."""
     # Configuration
-    DATASET_PATH = './data/processed/surface_features_processed.csv'
-    MIN_FEATURES = 5
-    MAX_FEATURES = 10  # Limited for computational efficiency
+    DATASET_PATH = './data/processed/surface_features_selected_manual.csv'
+    MIN_FEATURES = 6
+    MAX_FEATURES = 9  # Limited for computational efficiency
     
     compare_models_and_features(DATASET_PATH, MIN_FEATURES, MAX_FEATURES)
 

@@ -4,6 +4,7 @@ import seaborn as sns
 import numpy as np
 import pandas as pd
 import os
+from sklearn.model_selection import learning_curve
 from src.data.image_processing import extract_surface_data
 
 def plot_height_distribution(data_matrix: np.ndarray, title: str = "Height Value Distribution") -> None:
@@ -212,6 +213,48 @@ def visualize_dataset_samples(dataset_csv: str, image_dir: str, num_samples: int
                 sample_names,
                 f"Height Distribution Comparison: {label}"
             )
+
+
+def plot_learning_curves(models: dict, X: np.ndarray, y: np.ndarray, cv: int = 5, train_sizes: np.ndarray = np.linspace(0.1, 1.0, 10)):
+    """
+    Plot learning curves for multiple models to check for overfitting.
+
+    Args:
+        models: Dictionary of model names to model instances
+        X: Feature matrix
+        y: Target vector
+        cv: Number of cross-validation folds
+        train_sizes: Array of training set sizes to evaluate
+    """
+    plt.figure(figsize=(12, 8))
+    
+    for name, model in models.items():
+        train_sizes_abs, train_scores, validation_scores = learning_curve(
+            model, X, y, cv=cv, train_sizes=train_sizes, n_jobs=-1
+        )
+        
+        # Calculate mean and std for training and validation scores
+        train_mean = np.mean(train_scores, axis=1)
+        train_std = np.std(train_scores, axis=1)
+        val_mean = np.mean(validation_scores, axis=1)
+        val_std = np.std(validation_scores, axis=1)
+        
+        color = 'blue' if 'Random' in name else 'green'
+        # Plot training scores
+        plt.plot(train_sizes_abs, train_mean, 'o-', label=f'{name} Training Score', color=color, alpha=0.7)
+        plt.fill_between(train_sizes_abs, train_mean - train_std, train_mean + train_std, alpha=0.1, color=color)
+        
+        # Plot validation scores
+        plt.plot(train_sizes_abs, val_mean, 's-', label=f'{name} Validation Score', color='red' if 'Random' in name else 'orange')
+        plt.fill_between(train_sizes_abs, val_mean - val_std, val_mean + val_std, alpha=0.1, color='red' if 'Random' in name else 'orange')
+    
+    plt.title('Learning Curves')
+    plt.xlabel('Training Set Size')
+    plt.ylabel('Score')
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+    plt.tight_layout()
+    plt.show()
 
 
 if __name__ == "__main__":
