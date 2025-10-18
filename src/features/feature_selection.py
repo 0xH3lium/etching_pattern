@@ -194,7 +194,7 @@ def select_features(df: pd.DataFrame, method: str = 'manual', n_features: int = 
             'gradient_orientation_entropy', 'mean_gradient_magnitude',
         ]
         """
-        selected_features = ['mean', 'std_dev', 'skewness', 'kurt', 'mean_blob_size', 'lbp_hist_0', 'hu_moment_1']
+        selected_features = ['mean', 'std_dev', 'skewness', 'kurt', 'mean_blob_size', 'hu_moment_1']
 
         # Add FFT features (you might want to select specific bins)
         #fft_features = [col for col in feature_columns if col.startswith('fft_bin_')]

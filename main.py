@@ -10,13 +10,8 @@ sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
 from data.dataset_creation import create_dataset_from_directory
 from features.feature_selection import select_features
 from models.models import train_random_forest_kfold, train_xgboost_kfold, train_ann_kfold
-from visualization.visualization import visualize_dataset_samples, plot_learning_curves
 import os
 import pandas as pd
-import numpy as np
-from sklearn.preprocessing import StandardScaler, LabelEncoder
-from sklearn.ensemble import RandomForestClassifier
-import xgboost as xgb
 
 
 def main():
@@ -32,7 +27,7 @@ def main():
         if not os.path.isdir(DATASET_DIRECTORY):
             print(f"Error: Dataset directory '{DATASET_DIRECTORY}' not found.")
             return
-        feature_df = create_dataset_from_directory(DATASET_DIRECTORY, OUTPUT_CSV_FILE)
+        create_dataset_from_directory(DATASET_DIRECTORY, OUTPUT_CSV_FILE)
     else:
         print(f"Dataset file '{OUTPUT_CSV_FILE}' already exists. Skipping dataset creation.")
 
@@ -65,60 +60,7 @@ def main():
     print("\n--- Training ANN ---")
     train_ann_kfold(SELECTED_CSV_FILE)
 
-    # Step 5: Plot learning curves
-    print("\n=== Step 5: Plotting Learning Curves ===")
-    plot_learning_curves_for_models(SELECTED_CSV_FILE)
-
     print("\n=== Pipeline Complete ===")
-
-
-def plot_learning_curves_for_models(dataset_path: str):
-    """
-    Plot learning curves for Random Forest and XGBoost models.
-    
-    Args:
-        dataset_path: Path to the processed dataset CSV file
-    """
-    # Load and prepare data
-    df = pd.read_csv(dataset_path)
-    df = df.drop(columns=['filename'])
-    df = df.dropna()
-    
-    X = df.drop(columns=['label'])
-    y = df['label']
-    
-    # Encode labels
-    le = LabelEncoder()
-    y_encoded = le.fit_transform(y)
-    
-    # Scale features
-    scaler = StandardScaler()
-    X_scaled = scaler.fit_transform(X)
-    
-    # Define models
-    models = {
-        'Random Forest': RandomForestClassifier(
-            n_estimators=150,
-            random_state=42,
-            max_features='sqrt',
-            min_samples_leaf=1,
-            min_samples_split=2,
-            n_jobs=-1
-        ),
-        'XGBoost': xgb.XGBClassifier(
-            n_estimators=150,
-            learning_rate=0.15,
-            max_depth=4,
-            subsample=1.0,
-            colsample_bytree=0.8,
-            eval_metric='mlogloss',
-            n_jobs=-1,
-            random_state=42
-        )
-    }
-    
-    # Plot learning curves
-    plot_learning_curves(models, X_scaled, y_encoded)
 
 
 if __name__ == "__main__":

@@ -87,8 +87,9 @@ def train_random_forest_kfold(
             n_estimators=150,
             random_state=42,
             max_features='sqrt',
-            min_samples_leaf=1,
-            min_samples_split=2,
+            max_depth=10,
+            min_samples_split=5,
+            min_samples_leaf=2,
             n_jobs=-1
         )
 
@@ -124,7 +125,7 @@ def train_random_forest_kfold(
 
     # Train final model on all data
     print("\n--- Step 5: Training Final Model on the Entire Dataset ---")
-    final_model = RandomForestClassifier(n_estimators=150, random_state=42, n_jobs=-1)
+    final_model = RandomForestClassifier(n_estimators=150, random_state=42, max_depth=10, min_samples_split=5, min_samples_leaf=2, n_jobs=-1)
     final_model.fit(X_scaled, y_encoded)
     print("Final model training complete.")
 
@@ -220,6 +221,8 @@ def train_xgboost_kfold(
             subsample=1.0,
             colsample_bytree=0.8,
             eval_metric='mlogloss',
+            reg_lambda=1,
+            reg_alpha=0.1,
             n_jobs=-1,
             random_state=42
         )
@@ -263,6 +266,8 @@ def train_xgboost_kfold(
         subsample=1.0,
         colsample_bytree=0.8,
         eval_metric='mlogloss',
+        reg_lambda=1,
+        reg_alpha=0.1,
         n_jobs=-1,
         random_state=42
     )
@@ -414,7 +419,7 @@ def train_ann_kfold(
         model = SimpleANN(input_size, num_classes)
 
         criterion = nn.CrossEntropyLoss()
-        optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+        optimizer = optim.Adam(model.parameters(), lr=learning_rate, weight_decay=1e-4)
 
         for epoch in range(epochs):
             model.train()
@@ -469,7 +474,7 @@ def train_ann_kfold(
 
     final_model = SimpleANN(input_size, num_classes)
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(final_model.parameters(), lr=learning_rate)
+    optimizer = optim.Adam(final_model.parameters(), lr=learning_rate, weight_decay=1e-4)
 
     for epoch in range(epochs):
         final_model.train()
